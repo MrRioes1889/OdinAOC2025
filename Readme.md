@@ -11,7 +11,7 @@
 > ```
 > with flags added for platform and optimizations respectively.
 ### Windows
-> For compiling on Windows bat files are provided. The Odin runtime needs to be registerd in the system's path.
+> For compiling on Windows bat files are provided. The Odin runtime needs to be registered in the system's path.
 > - Build for release:
 > ```
 > build.bat 
