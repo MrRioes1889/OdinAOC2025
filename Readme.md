@@ -5,21 +5,21 @@
 
 ## How to build
 ### General
-All subdirectories labeled like "day_*" should be buildable using the Odin runtime found at [https://odin-lang.org/](https://odin-lang.org/) using the command:
-```
-odin build . 
-```
-with flags added for platform and optimizations respectively.
+> All subdirectories labeled like "day_*" should be buildable using the [Odin runtime](https://odin-lang.org/) using the command:
+> ```
+> odin build . 
+> ```
+> with flags added for platform and optimizations respectively.
 ### Windows - x64
-For compiling on Windows for x64 architecture bat files are provided. The Odin runtime needs to be registerd in the system's path.
-- Build for release:
-```
-build.bat 
-```
-- Build with debug symbols and minimal optimizations:
-```
-build.bat -d
-```
+> For compiling on Windows for x64 architecture bat files are provided. The Odin runtime needs to be registerd in the system's path.
+> - Build for release:
+> ```
+> build.bat 
+> ```
+> - Build with debug symbols and minimal optimizations:
+> ```
+> build.bat -d
+> ```
 
 ## Usage
 Input gets generated for the puzzles for each AOC account individually. 
