@@ -22,7 +22,8 @@ build.bat -d
 ```
 
 ## Usage
-The input.txt files in the subdirectories need to be replaced with respective input text provided from the puzzles. 
+Input gets generated for the puzzles for each AOC account individually. 
+The input.txt files in the subdirectories need to be replaced with the respective input text.
 The executable expect input.txt in the working directory, or the path can be provided as such: 
 ```
 day_x.exe path/to/input.txt
