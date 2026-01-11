@@ -5,13 +5,13 @@
 
 ## How to build
 ### General
-> All subdirectories labeled like "day_*" should be buildable using the [Odin runtime](https://odin-lang.org/) using the command:
+> All subdirectories labeled like "day_*" should be buildable as cli-executables using the [Odin runtime](https://odin-lang.org/) using the command:
 > ```
-> odin build . 
+> odin build .
 > ```
 > with flags added for platform and optimizations respectively.
-### Windows - x64
-> For compiling on Windows for x64 architecture bat files are provided. The Odin runtime needs to be registerd in the system's path.
+### Windows
+> For compiling on Windows bat files are provided. The Odin runtime needs to be registerd in the system's path.
 > - Build for release:
 > ```
 > build.bat 
