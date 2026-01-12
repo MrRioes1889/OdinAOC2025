@@ -12,7 +12,7 @@ if not exist "bin\debug" md "bin\debug"
 if not exist "bin\release" md "bin\release"
 
 if "%~1" == "-d" (
-    odin build . -build-mode:exe -debug -o:minimal -out:bin/debug/%TARGET%.exe -subsystem:console -warnings-as-errors
+    odin build . -build-mode:exe -debug -o:none -linker:radlink -out:bin/debug/%TARGET%.exe -subsystem:console -warnings-as-errors
 ) else (
     odin build . -build-mode:exe -o:speed -out:bin/release/%TARGET%.exe -subsystem:console -warnings-as-errors
 )

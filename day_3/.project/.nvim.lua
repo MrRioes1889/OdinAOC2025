@@ -18,7 +18,7 @@ local target_name = string.sub(cwd, last_slash_i - string.len(cwd))
 
 vim.keymap.set("n", "<F6>",
     function()
-	vim.cmd("!build.bat")
+	vim.cmd("!build.bat -d")
 	vim.cmd("!del \"bin\\debug\\*.rdi\"")
 	vim.cmd("!raddbg --auto_step bin/debug/" .. target_name .. ".exe")
     end,
