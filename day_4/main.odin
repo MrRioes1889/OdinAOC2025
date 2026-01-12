@@ -6,12 +6,6 @@ import "core:fmt"
 import "core:os"
 import "core:strings"
 
-ScrollAccessCountType :: enum
-{
-    immediate,       // Part 1
-    repeated_removes // Part 2
-}
-
 main :: proc()
 {
     filename: string = "input.txt"

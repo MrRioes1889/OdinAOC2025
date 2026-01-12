@@ -6,12 +6,6 @@ import "core:fmt"
 import "core:os"
 import "core:strings"
 
-BatteryBankActivationSize :: enum
-{
-    two_batteries,	// Part 1
-    twelve_batteries	// Part 2
-}
-
 main :: proc()
 {
     filename: string = "input.txt"
@@ -29,14 +23,15 @@ main :: proc()
     defer delete(input_data)
 
     input_data_s := string(input_data)
-    max_joltage_sum, parse_success := get_max_joltage_sum(&input_data_s, BatteryBankActivationSize.twelve_batteries)
+    max_joltage_sum_2, max_joltage_sum_12, parse_success := get_max_joltage_sums(&input_data_s)
     if !parse_success
     {
 	fmt.printfln("Error: Failed to parse input file.")
 	return
     }
 
-    fmt.printfln("Sum of max battery bank joltages: %d", max_joltage_sum)
+    fmt.printfln("Sum of max battery bank joltages (2_batteries): %d", max_joltage_sum_2)
+    fmt.printfln("Sum of max battery bank joltages (12_batteries): %d", max_joltage_sum_12)
     fmt.printfln("Press any key to exit...")
     tmp_buf: [1]u8
     os.read(os.stdin, tmp_buf[:]) 
@@ -78,33 +73,30 @@ get_battery_bank_max_joltage :: proc(battery_bank_s: string, max_battery_count: 
     return max_joltage, true
 }
 
-get_max_joltage_sum :: proc(input: ^string, battery_bank_type: BatteryBankActivationSize) -> (sum: uint, ok: bool)
+get_max_joltage_sums :: proc(input: ^string) -> (joltage_sum_2: uint, joltage_sum_12: uint, ok: bool)
 {
-    sum = 0
+    joltage_sum_2 = 0
+    joltage_sum_12 = 0
 
     line_i: uint = 1
     for battery_bank_s in strings.split_lines_iterator(input)
     {
 	fmt.printfln("Battery bank: %s", battery_bank_s)
-	max_bank_joltage: uint = 0
-	switch battery_bank_type
-	{
-	case .two_batteries:
-	    max_bank_joltage, ok = get_battery_bank_max_joltage(battery_bank_s, 2)
-	case .twelve_batteries:
-	    max_bank_joltage, ok = get_battery_bank_max_joltage(battery_bank_s, 12)
-	}
+	max_bank_joltage_2, ok_2 := get_battery_bank_max_joltage(battery_bank_s, 2)
+	max_bank_joltage_12, ok_12 := get_battery_bank_max_joltage(battery_bank_s, 12)
 
-	if !ok
+	if !ok_2 || !ok_12
 	{
 	    fmt.printfln("Error: Failed to parse battery bank at line %d.", line_i)
-	    return sum, false
+	    return 0, 0, false
 	}
-	sum += max_bank_joltage
-	fmt.printfln("Max bank joltage: %d", max_bank_joltage)
+
+	joltage_sum_2 += max_bank_joltage_2
+	joltage_sum_12 += max_bank_joltage_12
+	fmt.printfln("Max bank joltage (12 batteries): %d", max_bank_joltage_12)
 
 	line_i += 1
     }
 
-    return sum, true
+    return joltage_sum_2, joltage_sum_12, true
 }
