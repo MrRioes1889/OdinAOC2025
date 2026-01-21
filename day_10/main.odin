@@ -1,6 +1,6 @@
 package main
 
-// Solution for Advent of Code 2025 - Day 9 (https://adventofcode.com/2025/day/9)
+// Solution for Advent of Code 2025 - Day 10 (https://adventofcode.com/2025/day/10)
 
 import "core:fmt"
 import "core:os"
