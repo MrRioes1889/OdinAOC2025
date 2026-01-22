@@ -27,7 +27,7 @@ main :: proc()
     input_data_s := string(input_data)
     tsc_freq, freq_ok := time.tsc_frequency()
     tsc_elapsed := time.read_cycle_counter()
-    you_to_out_path_count, svr_to_out_restricted_path_count, parse_success := do_thing(input_data_s)
+    you_to_out_path_count, svr_to_out_restricted_path_count, parse_success := get_path_counts(input_data_s)
     tsc_elapsed = time.read_cycle_counter() - tsc_elapsed
     fmt.printfln("Took %.5f ms", (f64(tsc_elapsed) / f64(tsc_freq)) * 1000)
     if !parse_success
@@ -53,7 +53,7 @@ Node :: struct
 }
 nodes_cap :: 1000
 
-do_thing :: proc(input: string) -> (you_to_out_path_count: uint, svr_to_out_restricted_path_count: uint, ok: bool)
+get_path_counts :: proc(input: string) -> (you_to_out_path_count: uint, svr_to_out_restricted_path_count: uint, ok: bool)
 {
     you_to_out_path_count = 0
     svr_to_out_restricted_path_count = 0
@@ -114,22 +114,22 @@ do_thing :: proc(input: string) -> (you_to_out_path_count: uint, svr_to_out_rest
 	}
     }
 
-    you_to_out_path_count = get_path_length(you_node_i, out_node_i, nodes[0:nodes_count], branches[0:branches_count])
-    svr_to_out_restricted_path_count = get_path_length_over_nodes({ svr_node_i, fft_node_i, dac_node_i, out_node_i }, nodes[0:nodes_count], branches[0:branches_count])
-    svr_to_out_restricted_path_count += get_path_length_over_nodes({ svr_node_i, dac_node_i, fft_node_i, out_node_i }, nodes[0:nodes_count], branches[0:branches_count])
+    you_to_out_path_count = get_path_count(you_node_i, out_node_i, nodes[0:nodes_count], branches[0:branches_count])
+    svr_to_out_restricted_path_count = get_path_count_over_nodes({ svr_node_i, fft_node_i, dac_node_i, out_node_i }, nodes[0:nodes_count], branches[0:branches_count])
+    svr_to_out_restricted_path_count += get_path_count_over_nodes({ svr_node_i, dac_node_i, fft_node_i, out_node_i }, nodes[0:nodes_count], branches[0:branches_count])
 
     return you_to_out_path_count, svr_to_out_restricted_path_count, true
 }
 
-get_path_length :: proc(start: NodeIndex, target: NodeIndex, nodes: []Node, branches: []NodeIndex) -> uint
+get_path_count :: proc(start: NodeIndex, target: NodeIndex, nodes: []Node, branches: []NodeIndex) -> uint
 {
     nodes_count: int = len(nodes)
     memoization_cache: [nodes_cap]u64 = {}
     mem.set(&memoization_cache, 0xFF, size_of(memoization_cache[0]) * nodes_count)
-    return _get_path_length(start, target, nodes, branches, memoization_cache[0:nodes_count])
+    return _get_path_count(start, target, nodes, branches, memoization_cache[0:nodes_count])
 }
 
-get_path_length_over_nodes :: proc(path_nodes: []NodeIndex, nodes: []Node, branches: []NodeIndex) -> uint
+get_path_count_over_nodes :: proc(path_nodes: []NodeIndex, nodes: []Node, branches: []NodeIndex) -> uint
 {
     nodes_count: int = len(nodes)
     memoization_cache: [nodes_cap]u64 = {}
@@ -140,7 +140,7 @@ get_path_length_over_nodes :: proc(path_nodes: []NodeIndex, nodes: []Node, branc
     {
 	target_node_i: NodeIndex = path_nodes[path_node_i]
 	start_node_i: NodeIndex = path_nodes[path_node_i - 1]
-	length = _get_path_length(start_node_i, target_node_i, nodes, branches, memoization_cache[0:nodes_count])
+	length = _get_path_count(start_node_i, target_node_i, nodes, branches, memoization_cache[0:nodes_count])
 	mem.set(&memoization_cache, 0xFF, size_of(memoization_cache[0]) * nodes_count)
 	memoization_cache[start_node_i] = u64(length)
     }
@@ -148,20 +148,20 @@ get_path_length_over_nodes :: proc(path_nodes: []NodeIndex, nodes: []Node, branc
     return length
 }
 
-_get_path_length :: proc(start: NodeIndex, target: NodeIndex, nodes: []Node, branches: []NodeIndex, memoization_cache: []u64) -> uint
+_get_path_count :: proc(start: NodeIndex, target: NodeIndex, nodes: []Node, branches: []NodeIndex, memoization_cache: []u64) -> uint
 {
     if memoization_cache[start] != max(u64) { return uint(memoization_cache[start]) }
     if start == target { return 1 }
 
     node: Node = nodes[start]
-    path_length: uint = 0
+    path_count: uint = 0
     for child_i in branches[node.branches_offset : node.branches_offset + node.children_count]
     {
-	path_length += _get_path_length(child_i, target, nodes, branches, memoization_cache)
+	path_count += _get_path_count(child_i, target, nodes, branches, memoization_cache)
     }
 
-    memoization_cache[start] = u64(path_length)
-    return path_length
+    memoization_cache[start] = u64(path_count)
+    return path_count
 }
 
 str_to_name :: proc(str: string) -> (arr: NodeName)
