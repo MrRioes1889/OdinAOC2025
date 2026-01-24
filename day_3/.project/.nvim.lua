@@ -40,4 +40,12 @@ vim.keymap.set("n", "<F8>",
     { desc = "Build & Run project release" }
 )
 
+vim.keymap.set("n", "<F9>",
+    function()
+	vim.cmd("!build.bat")
+	vim.cmd("!start cmd /k \"bin\\release\\" .. target_name .. ".exe\"")
+    end,
+    { desc = "Build & Run project release" }
+)
+
 vim.notify("Project config loaded successfully.", vim.log.levels.INFO)

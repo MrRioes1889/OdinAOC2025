@@ -35,6 +35,14 @@ vim.keymap.set("n", "<F7>",
 vim.keymap.set("n", "<F8>",
     function()
 	vim.cmd("!build.bat")
+	vim.cmd("!start cmd /c \"bin\\release\\" .. target_name .. ".exe\"")
+    end,
+    { desc = "Build & Run project release" }
+)
+
+vim.keymap.set("n", "<F9>",
+    function()
+	vim.cmd("!build.bat")
 	vim.cmd("!start cmd /k \"bin\\release\\" .. target_name .. ".exe\"")
     end,
     { desc = "Build & Run project release" }

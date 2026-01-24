@@ -23,10 +23,14 @@ main :: proc()
     }
     defer delete(input_data)
 
-    input_data_s := string(input_data)
+    exact_count: uint = 0
+    transient_count: uint = 0
+    parse_success: bool = true
+
     dial_value_offset: int = 50
     fmt.printfln("Starting dial value: %d", dial_value_offset)
-    exact_count, transient_count, parse_success := count_dial_zero_hits(dial_value_offset, &input_data_s)
+
+    exact_count, transient_count, parse_success = count_dial_zero_hits(dial_value_offset, string(input_data))
     if !parse_success
     {
 	fmt.printfln("Error: Failed to parse input file.")
@@ -43,15 +47,16 @@ main :: proc()
 // Returns: 
 // exact_count: 	counts when the dial landed on zero after a line of execution 
 // transient_count: 	counts when the dial touched zero during a line of execution 
-count_dial_zero_hits :: proc(dial_value_offset: int, input: ^string) -> (exact_count: uint, transient_count: uint, ok: bool)
+count_dial_zero_hits :: proc(dial_value_offset: int, input: string) -> (exact_count: uint, transient_count: uint, ok: bool)
 {
     dial_range_max :: 100
     exact_count = 0
     transient_count = 0
     dial_value: int = dial_value_offset
 
+    read_input_s: string = input
     line_index: uint = 0
-    for line in strings.split_lines_iterator(input)
+    for line in strings.split_lines_iterator(&read_input_s)
     {
 	length := len(line)
 	if (length < 2)
@@ -78,7 +83,6 @@ count_dial_zero_hits :: proc(dial_value_offset: int, input: ^string) -> (exact_c
 	dial_value = (dial_value + dial_clicks) % dial_range_max
 	dial_value += dial_value < 0 ? dial_range_max : 0
 	exact_count += uint(dial_value == 0)
-	fmt.printfln("%s:\tNew Dial Value: %d\tDial On Zero: %t\tTotal exact hits: %d\tTotal transient hits: %d", line, dial_value, dial_value == 0, exact_count, transient_count) 
 	
 	line_index += 1
     }
